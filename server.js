@@ -1,22 +1,28 @@
 const express = require('express');
-const http = require('http'); // Node.js built-in module
+const http = require('http');
 const socketIo = require('socket.io');
 
 const app = express();
-const server = http.createServer(app); // Create a server instance using Express
-const io = socketIo(server); // Attach Socket.IO to the server
+const server = http.createServer(app);
+const io = socketIo(server);
 
-const port = 3000;
-
-// Middleware to serve static files
 app.use(express.static('public'));
 
-// Route for the root path
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/index.html');
+io.on('connection', (socket) => {
+    console.log('A user connected');
+
+    socket.on('join', (data) => {
+        const username = data.username;
+        console.log(`${username} joined the game.`);
+        io.emit('user joined', { username });
+    });
+
+    socket.on('disconnect', () => {
+        console.log('A user disconnected');
+    });
 });
 
-// Start the server
+const port = 3000;
 server.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+    console.log(`Server is running on http://localhost:${port}`);
 });

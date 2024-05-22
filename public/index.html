@@ -1,14 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tic-Tac-Toe</title>
-  <link rel="stylesheet" href="/css/styles.css">
+    <title>Tic-Tac-Toe</title>
 </head>
 <body>
-  <h1>Welcome to Tic-Tac-Toe!</h1>
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="/js/script.js"></script>
+    <h1>Welcome to Tic-Tac-Toe</h1>
+    <form id="usernameForm">
+        <label for="username">Enter your username:</label>
+        <input type="text" id="username" name="username" required>
+        <button type="submit">Join Game</button>
+    </form>
+    <div id="game" style="display:none;">
+        <!-- Game content will go here -->
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        document.getElementById('usernameForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            socket.emit('join', { username });
+            document.getElementById('usernameForm').style.display = 'none';
+            document.getElementById('game').style.display = 'block';
+        });
+
+        socket.on('user joined', function(data) {
+            console.log(data.username + ' joined the game.');
+        });
+    </script>
 </body>
 </html>
