@@ -12,9 +12,13 @@ io.on('connection', (socket) => {
     console.log('A user connected');
 
     socket.on('join', (data) => {
-        const username = data.username;
-        console.log(`${username} joined the game.`);
-        io.emit('user joined', { username });
+        console.log(`${data.username} joined the game`);
+        socket.broadcast.emit('user joined', { username: data.username });
+    });
+
+    socket.on('move', (data) => {
+        console.log(`Move made: Player ${data.player} at index ${data.index}`);
+        io.emit('move', data);
     });
 
     socket.on('disconnect', () => {
